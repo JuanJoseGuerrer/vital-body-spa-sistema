@@ -1,81 +1,87 @@
-
---Creación de las tablas en el esquema public
-CREATE TABLE CUSTOMER (
-    CUSTOMER_ID VARCHAR(10) PRIMARY KEY,
-    First_Name VARCHAR(20) NOT NULL,
-    Middle_Name VARCHAR(20),
-    First_Last_Name VARCHAR(20) NOT NULL,
-    Second_Last_Name VARCHAR(20),
-    Phone VARCHAR(15) NOT NULL,
-    Date_of_birth DATE NOT NULL
+CREATE TABLE customers (
+    customer_id VARCHAR(15) PRIMARY KEY,
+    first_name VARCHAR(20) NOT NULL,
+    middle_name VARCHAR(20),
+    first_last_name VARCHAR(20) NOT NULL,
+    second_last_name VARCHAR(20),
+    phone VARCHAR(15) NOT NULL,
+    birth_date DATE NOT NULL
 );
 
-
-CREATE TABLE SERVICE (
-    SERVICE_ID VARCHAR(5) PRIMARY KEY,
-    Name VARCHAR(20) NOT NULL,
-    Description VARCHAR(50),
-    Cost NUMERIC(10,2) NOT NULL
+CREATE TABLE services (
+    service_id VARCHAR(3) PRIMARY KEY,
+    name VARCHAR(30) NOT NULL,
+    description VARCHAR(60),
+    cost NUMERIC(10,2) NOT NULL
 );
 
-CREATE TABLE EMPLOYEE (
-    EMPLOYEE_ID VARCHAR(5) PRIMARY KEY,
-    First_Name VARCHAR(15) NOT NULL,
-    Middle_Name VARCHAR(15),
-    First_Last_Name VARCHAR(15) NOT NULL,
-    Second_Last_Name VARCHAR(15),
-    Phone VARCHAR(15) NOT NULL,
-    Hiring_Date DATE NOT NULL,
-    Salary NUMERIC(10,2) NOT NULL,
-    State VARCHAR(9) NOT NULL,
-    Certification VARCHAR(30) NOT NULL,
-    Specialty VARCHAR(30) NOT NULL,
-    User_name VARCHAR(30) NOT NULL,
-    Password VARCHAR(15) NOT NULL
+CREATE TABLE employees (
+    employee_id VARCHAR(3) PRIMARY KEY,
+    first_name VARCHAR(20) NOT NULL,
+    middle_name VARCHAR(20),
+    first_last_name VARCHAR(20) NOT NULL,
+    second_last_name VARCHAR(20),
+    phone VARCHAR(15) NOT NULL,
+    hiring_date DATE NOT NULL,          
+    salary NUMERIC(10,2) NOT NULL,
+    status VARCHAR(9) NOT NULL,         
+    certification VARCHAR(30) NOT NULL,
+    specialty VARCHAR(30),
+    user_name VARCHAR(20) UNIQUE, 
+    password VARCHAR(60),         
+    employee_admin_id VARCHAR(5),
+
+    CONSTRAINT fk_employee_admin FOREIGN KEY (employee_admin_id) 
+        REFERENCES employees(employee_id)
 );
 
-CREATE TABLE APPOINTMENT (
-    APPOINTMENT_ID VARCHAR(5) PRIMARY KEY,
-    Date DATE NOT NULL,
-    Hour TIME NOT NULL,
-    State VARCHAR(20) NOT NULL,
-    CUSTOMER_ID VARCHAR(10) NOT NULL,
-    SERVICE_ID VARCHAR(5) NOT NULL,
-    FOREIGN KEY (CUSTOMER_ID) 
-    REFERENCES CUSTOMER(CUSTOMER_ID),
-    FOREIGN KEY (SERVICE_ID) 
-    REFERENCES SERVICE(SERVICE_ID)
-
+CREATE TABLE appointments (
+    appointment_id VARCHAR(5) PRIMARY KEY,
+    appointment_date TIMESTAMP WITH TIME ZONE NOT NULL,   
+    status VARCHAR(20) NOT NULL,        
+    customer_id VARCHAR(15) NOT NULL, 
+    service_id VARCHAR(3) NOT NULL,
+    
+    CONSTRAINT fk_appointments_customer FOREIGN KEY (customer_id) 
+        REFERENCES customers(customer_id),
+    CONSTRAINT fk_appointments_service FOREIGN KEY (service_id) 
+        REFERENCES services(service_id)
 );
 
-CREATE TABLE APPOINTMENT_DETAILS (
-    APPOINTMENT_DETAILS_ID VARCHAR(2) PRIMARY KEY,
-    Cost NUMERIC(10,2) NOT NULL,
-    EMPLOYEE_ID VARCHAR(5) NOT NULL,
-    SERVICE_ID VARCHAR(5) NOT NULL,
-    APPOINTMENT_ID VARCHAR(5) NOT NULL,
-    FOREIGN KEY (EMPLOYEE_ID) 
-    REFERENCES EMPLOYEE(EMPLOYEE_ID),
-    FOREIGN KEY (SERVICE_ID) 
-    REFERENCES SERVICE(SERVICE_ID),
-    FOREIGN KEY (APPOINTMENT_ID) 
-    REFERENCES APPOINTMENT(APPOINTMENT_ID)
+CREATE TABLE appointment_details (
+   
+    appointment_details_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, 
+    cost NUMERIC(10,2) NOT NULL,
+    employee_id VARCHAR(3) NOT NULL,
+    service_id VARCHAR(3) NOT NULL,
+    appointment_id VARCHAR(5) NOT NULL,
+    
+    CONSTRAINT fk_details_employee FOREIGN KEY (employee_id) 
+        REFERENCES employees(employee_id),
+    CONSTRAINT fk_details_service FOREIGN KEY (service_id) 
+        REFERENCES services(service_id),
+    CONSTRAINT fk_details_appointment FOREIGN KEY (appointment_id) 
+        REFERENCES appointments(appointment_id)
 );
 
-CREATE TABLE PAYMENT (
-    PAYMENT_ID VARCHAR(10) PRIMARY KEY,
-    Payment_Method VARCHAR(15) NOT NULL,
-    Payment_Date DATE NOT NULL,
-    Payment_Amount NUMERIC(10,2) NOT NULL,
-    APPOINTMENT_ID VARCHAR(5) NOT NULL,
-    FOREIGN KEY (APPOINTMENT_ID) REFERENCES APPOINTMENT(APPOINTMENT_ID)
+CREATE TABLE payments (
+    payment_id VARCHAR(5) PRIMARY KEY,
+    payment_method VARCHAR(15) NOT NULL, 
+    payment_date TIMESTAMP WITH TIME ZONE NOT NULL,   
+    payment_amount NUMERIC(10,2) NOT NULL,
+    appointment_id VARCHAR(5) NOT NULL,   
+    
+    CONSTRAINT fk_payments_appointment FOREIGN KEY (appointment_id) 
+        REFERENCES appointments(appointment_id)
 );
 
-CREATE TABLE MEDICAL_RECORD (
-    MEDICAL_RECORD_ID VARCHAR(3) PRIMARY KEY,
-    Date DATE NOT NULL,
-    Description VARCHAR(200) NOT NULL,
-    CUSTOMER_ID VARCHAR(10) NOT NULL,
-    FOREIGN KEY (CUSTOMER_ID) REFERENCES CUSTOMER(CUSTOMER_ID)
+CREATE TABLE medical_records (
+    
+    medical_record_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, 
+    registration_date DATE NOT NULL,          
+    description VARCHAR(250) NOT NULL,
+    customer_id VARCHAR(15) NOT NULL,
+    
+    CONSTRAINT fk_records_customer FOREIGN KEY (customer_id) 
+        REFERENCES customers(customer_id)
 );
-
