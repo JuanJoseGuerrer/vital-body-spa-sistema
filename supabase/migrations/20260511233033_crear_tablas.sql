@@ -29,7 +29,7 @@ CREATE TABLE employees (
     specialty VARCHAR(30),
     user_name VARCHAR(20) UNIQUE, 
     password VARCHAR(60),         
-    employee_admin_id VARCHAR(5),
+    employee_admin_id VARCHAR(5),   
 
     CONSTRAINT fk_employee_admin FOREIGN KEY (employee_admin_id) 
         REFERENCES employees(employee_id)
